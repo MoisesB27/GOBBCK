@@ -19,7 +19,7 @@ use App\Http\Controllers\Api\TestimonioController;
 use App\Http\Controllers\Api\TramiteController;
 use App\Http\Controllers\Api\UbicacionController;
 use App\Http\Controllers\Api\UserController;
-
+use App\Http\Controllers\AuthController;
 
 // ======================= USERS =======================
 // GET      /users            index
@@ -30,6 +30,14 @@ use App\Http\Controllers\Api\UserController;
 // DELETE   /users/{id}       destroy
 Route::apiResource('users', UserController::class)->
 only(['index', 'show', 'store', 'destroy', 'update']);
+
+
+// ======================= Authentication =======================
+// POST     /login           login
+// POST     /logout          logout 
+Route::apiResource( 'auths', AuthController::class)->
+only(['login', 'logout','register','changePassword']);
+
 
 // ======================= ACTIVIDADES =======================
 // GET      /actividades           index
