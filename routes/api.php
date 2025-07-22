@@ -19,7 +19,7 @@ use App\Http\Controllers\Api\TestimonioController;
 use App\Http\Controllers\Api\TramiteController;
 use App\Http\Controllers\Api\UbicacionController;
 use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Api\LoginController;
 
 // ======================= USERS =======================
 // GET      /users            index
@@ -35,8 +35,8 @@ only(['index', 'show', 'store', 'destroy', 'update']);
 // ======================= Authentication =======================
 // POST     /login           login
 // POST     /logout          logout 
-Route::apiResource( 'auths', AuthController::class)->
-only(['login', 'logout','register','changePassword']);
+Route::apiresource('login', LoginController::class)
+->only(['login', 'logout', 'register', 'changePassword']);
 
 
 // ======================= ACTIVIDADES =======================

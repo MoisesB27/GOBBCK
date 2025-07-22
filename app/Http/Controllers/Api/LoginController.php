@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
+use App\Http\Controllers\Controller;
 
 use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\LoginRequest;
@@ -10,7 +11,7 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
-class AuthController extends Controller
+class LoginController extends Controller
 {
     // Registro
     public function register(RegisterRequest $request)
