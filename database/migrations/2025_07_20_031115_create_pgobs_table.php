@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('appointment_limit')->default(0);
             $table->integer('appointment_limit_per_user')->default(0);
             $table->timestamps();
+
         });
     }
 

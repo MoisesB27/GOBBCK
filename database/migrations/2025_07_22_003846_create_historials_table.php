@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('tipo_servicio_id')->nullable();
             $table->unsignedBigInteger('entidad_id')->nullable();
+            $table->unsignedBigInteger('appointment_id')->nullable();
 
             // Fechas y horarios
             $table->date('fecha')->nullable();
