@@ -4,6 +4,9 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 
+// Importa tu middleware personalizado
+use App\Http\Middleware\OptionalAuthenticate;
+
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
@@ -12,8 +15,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Agregar middleware globalmente (se ejecuta en todas las peticiones)
+        // $middleware->append(OptionalAuthenticate::class);
+
+        // O registrar un alias (para usar en rutas con middleware('optional.auth'))
+        $middleware->alias([
+            'optional.auth' => OptionalAuthenticate::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
-    })->create();
+    })
+    ->create();

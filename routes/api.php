@@ -19,7 +19,7 @@ use App\Http\Controllers\Api\TestimonioController;
 use App\Http\Controllers\Api\TramiteController;
 use App\Http\Controllers\Api\UbicacionController;
 use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\Api\LoginController;
+use App\Http\Controllers\Auth\LoginController;
 
 // ======================= USERS =======================
 // GET      /users            index
@@ -35,8 +35,20 @@ only(['index', 'show', 'store', 'destroy', 'update']);
 // ======================= Authentication =======================
 // POST     /login           login
 // POST     /logout          logout 
-Route::apiresource('login', LoginController::class)
-->only(['login', 'logout', 'register', 'changePassword']);
+//Route::apiResource('login', LoginController::class)
+//->only(['login', 'logout', 'register', 'changePassword']);
+Route::post('register', [LoginController::class, 'register']);
+Route::post('login', [LoginController::class, 'login']);
+
+
+// ======================= Authentication Middleware =======================
+Route::middleware('auth:sanctum')->group(function () {
+Route::post('logout', [LoginController::class, 'logout']);
+Route::post('change-password', [LoginController::class, 'changePassword']);
+Route::apiResource('historiales', HistorialController::class)->only(['index', 'show', 'store', 'destroy']);
+Route::apiResource('profiles', ProfileController::class)->only(['index', 'show', 'destroy']);
+Route::apiResource('soportes', SoporteController::class) ->only(['index', 'show', 'store', 'destroy']);
+});
 
 
 // ======================= ACTIVIDADES =======================
@@ -94,15 +106,6 @@ Route::apiResource('documentos', DocumentoController::class)
 Route::apiResource('formularios', FormularioController::class)
 ->only(['index', 'show', 'store', 'destroy']);
 
-// ======================= HISTORIALES =======================
-// GET      /historiales           index
-// GET      /historiales/{id}      show
-// POST     /historiales           store
-// PUT      /historiales/{id}      update
-// PATCH    /historiales/{id}      update
-// DELETE   /historiales/{id}      destroy
-Route::apiResource('historiales', HistorialController::class)
-->only(['index', 'show', 'store', 'destroy']);
 
 // ======================= INSTITUCIONES =======================
 // GET      /instituciones           index
@@ -145,12 +148,6 @@ Route::apiResource('preferencias', PreferenciaController::class)
 Route::apiResource('pgobs', PgobController::class)
     ->only(['index', 'show', 'store', 'destroy']);
 
-// ======================= PROFILES =======================
-// GET      /profiles           index
-// GET      /profiles/{id}      show
-// DELETE   /profiles/{id}      destroy
-Route::apiResource('profiles', ProfileController::class)
-    ->only(['index', 'show', 'destroy']);
 
 // ======================= SERVICES =======================
 // GET      /services           index
@@ -161,17 +158,6 @@ Route::apiResource('profiles', ProfileController::class)
 // DELETE   /services/{id}      destroy
 Route::apiResource('services', ServiceController::class)->
 only(['index', 'show', 'store', 'destroy']);
-
-
-// ======================= SOPORTES =======================
-// GET      /soportes           index
-// GET      /soportes/{id}      show
-// POST     /soportes           store
-// PUT      /soportes/{id}      update
-// PATCH    /soportes/{id}      update
-// DELETE   /soportes/{id}      destroy
-Route::apiResource('soportes', SoporteController::class)
-    ->only(['index', 'show', 'store', 'destroy']);
 
 // ======================= UBICACIONES =======================
 // GET      /ubicaciones           index
