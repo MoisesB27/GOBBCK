@@ -1,0 +1,177 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\ActividadeController;
+use App\Http\Controllers\Api\AppointmentAccessLogController;
+use App\Http\Controllers\Api\AppointmentsController;
+use App\Http\Controllers\Api\AppointmentServiceController;
+use App\Http\Controllers\Api\DocumentoController;
+use App\Http\Controllers\Api\FormularioController;
+use App\Http\Controllers\Api\HistorialController;
+use App\Http\Controllers\Api\InstitucionesController;
+use App\Http\Controllers\Api\NotificacionController;
+use App\Http\Controllers\Api\PgobController;
+use App\Http\Controllers\Api\PreferenciaController;
+use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\ServiceController;
+use App\Http\Controllers\Api\SoporteController;
+use App\Http\Controllers\Api\TestimonioController;
+use App\Http\Controllers\Api\TramiteController;
+use App\Http\Controllers\Api\UbicacionController;
+use App\Http\Controllers\Api\UserController;
+
+
+// ======================= USERS =======================
+// GET      /users            index
+// GET      /users/{id}       show
+// POST     /users            store
+// PUT      /users/{id}       update
+// PATCH    /users/{id}       update
+// DELETE   /users/{id}       destroy
+Route::apiResource('users', UserController::class)->only(['index', 'show', 'store', 'destroy', 'update']);
+
+// ======================= ACTIVIDADES =======================
+// GET      /actividades           index
+// GET      /actividades/{id}      show
+// POST     /actividades           store
+Route::apiResource('actividades', ActividadeController::class)
+    ->only(['index', 'show','destroy', 'store']);
+
+// ======================= APPOINTMENT ACCESS LOGS =======================
+// GET      /appointment-access-logs           index
+// GET      /appointment-access-logs/{id}      show
+// POST     /appointment-access-logs           store
+// DELETE   /appointment-access-logs/{id}      destroy
+Route::apiResource('appointment-access-logs', AppointmentAccessLogController::class)
+    ->only(['index', 'show', 'store', 'destroy']);
+
+// ======================= APPOINTMENT SERVICES =======================
+// GET      /appointment-services           index
+// GET      /appointment-services/{id}      show
+// POST     /appointment-services           store
+// PUT      /appointment-services/{id}      update
+// PATCH    /appointment-services/{id}      update
+// DELETE   /appointment-services/{id}      destroy
+Route::apiResource('AppointmentServices', AppointmentServiceController::class)->only(['index', 'show', 'store', 'destroy']);
+
+// ======================= APPOINTMENTS =======================
+// GET      /appointments           index
+// GET      /appointments/{id}      show
+// POST     /appointments           store
+// PUT      /appointments/{id}      update
+// PATCH    /appointments/{id}      update
+// DELETE   /appointments/{id}      destroy
+Route::apiResource('appointments', AppointmentsController::class);
+
+// ======================= DOCUMENTOS =======================
+// GET      /documentos           index
+// GET      /documentos/{id}      show
+// POST     /documentos           store
+// PUT      /documentos/{id}      update
+// PATCH    /documentos/{id}      update
+// DELETE   /documentos/{id}      destroy
+Route::apiResource('documentos', DocumentoController::class);
+
+// ======================= FORMULARIOS =======================
+// GET      /formularios           index
+// GET      /formularios/{id}      show
+// POST     /formularios           store
+// PUT      /formularios/{id}      update
+// PATCH    /formularios/{id}      update
+// DELETE   /formularios/{id}      destroy
+Route::apiResource('formularios', FormularioController::class);
+
+// ======================= HISTORIALES =======================
+// GET      /historiales           index
+// GET      /historiales/{id}      show
+// POST     /historiales           store
+// PUT      /historiales/{id}      update
+// PATCH    /historiales/{id}      update
+// DELETE   /historiales/{id}      destroy
+Route::apiResource('historiales', HistorialController::class);
+
+// ======================= INSTITUCIONES =======================
+// GET      /instituciones           index
+// GET      /instituciones/{id}      show
+// POST     /instituciones           store
+// PUT      /instituciones/{id}      update
+// PATCH    /instituciones/{id}      update
+// DELETE   /instituciones/{id}      destroy
+Route::apiResource('instituciones', InstitucionesController::class)->
+only(['index', 'show', 'store', 'destroy', 'update']);
+
+
+// ======================= NOTIFICACIONES =======================
+// GET      /notificaciones           index
+// GET      /notificaciones/{id}      show
+// POST     /notificaciones           store
+// PUT      /notificaciones/{id}      update
+// PATCH    /notificaciones/{id}      update
+// DELETE   /notificaciones/{id}      destroy
+Route::apiResource('notificaciones', NotificacionController::class);
+
+// ======================= PREFERENCIAS =======================
+// GET      /preferencias           index
+// GET      /preferencias/{id}      show
+// POST     /preferencias           store
+// PUT      /preferencias/{id}      update
+// PATCH    /preferencias/{id}      update
+// DELETE   /preferencias/{id}      destroy
+Route::apiResource('preferencias', PreferenciaController::class);
+
+// ======================= PGOBS =======================
+// GET      /pgobs           index
+// GET      /pgobs/{id}      show
+// POST     /pgobs           store
+// PUT      /pgobs/{id}      update
+// PATCH    /pgobs/{id}      update
+// DELETE   /pgobs/{id}      destroy
+Route::apiResource('pgobs', PgobController::class);
+
+// ======================= PROFILES =======================
+// GET      /profiles           index
+// GET      /profiles/{id}      show
+// DELETE   /profiles/{id}      destroy
+Route::apiResource('profiles', ProfileController::class)
+    ->only(['index', 'show', 'destroy']);
+
+// ======================= SERVICES =======================
+// GET      /services           index
+// GET      /services/{id}      show
+// POST     /services           store
+// PUT      /services/{id}      update
+// PATCH    /services/{id}      update
+// DELETE   /services/{id}      destroy
+Route::apiResource('services', ServiceController::class)->
+only(['index', 'show', 'store', 'destroy']);
+
+
+// ======================= SOPORTES =======================
+// GET      /soportes           index
+// GET      /soportes/{id}      show
+// POST     /soportes           store
+// PUT      /soportes/{id}      update
+// PATCH    /soportes/{id}      update
+// DELETE   /soportes/{id}      destroy
+Route::apiResource('soportes', SoporteController::class);
+
+// ======================= UBICACIONES =======================
+// GET      /ubicaciones           index
+// GET      /ubicaciones/{id}      show
+Route::apiResource('ubicaciones', UbicacionController::class)
+    ->only(['index', 'show']);
+
+// ======================= TRAMITES =======================
+// GET      /tramites           index
+// GET      /tramites/{id}      show
+// POST     /tramites           store
+// PUT      /tramites/{id}      update
+// PATCH    /tramites/{id}      update
+// DELETE   /tramites/{id}      destroy
+Route::apiResource('tramites', TramiteController::class)->only(['index', 'show', 'store', 'destroy']);
+
+
+
+// ======================= TESTIMONIOS (pública) =======================
+// GET      /testimonios           index
+Route::get('testimonios', [TestimonioController::class, 'index'])->name('testimonios.index');
