@@ -15,20 +15,27 @@ class LoginController extends Controller
 {
     // Registro
     public function register(RegisterRequest $request)
-    {
-        $user = User::create([
-            'name' => $request->name,
-            'email'=> $request->email,
-            'password'=> Hash::make($request->password),
-        ]);
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255|unique:users',
+        'password' => 'required|string|min:8|confirmed',
+    ]);
 
-        $token = $user->createToken('api_token')->plainTextToken;
+    $user = User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => Hash::make($request->password),
+    ]);
 
-        return response()->json([
-            'user' => $user,
-            'token'=> $token,
-        ], 201);
-    }
+    $token = $user->createToken('auth_token')->plainTextToken;
+
+    return response()->json([
+        'data' => $user,
+        'access_token' => $token,
+        'token_type' => 'Bearer',
+    ], 201);
+}
 
     // Login
     public function login(LoginRequest $request)
