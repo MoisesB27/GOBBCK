@@ -46,7 +46,7 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::post('logout', [LoginController::class, 'logout']);
 Route::post('change-password', [LoginController::class, 'changePassword']);
 Route::apiResource('historiales', HistorialController::class)->only(['index', 'show', 'store', 'destroy']);
-Route::apiResource('profiles', ProfileController::class)->only(['index', 'show', 'destroy']);
+Route::apiResource('profiles', ProfileController::class)->only(['index', 'show', 'destroy','store']);
 Route::apiResource('soportes', SoporteController::class) ->only(['index', 'show', 'store', 'destroy']);
 });
 
