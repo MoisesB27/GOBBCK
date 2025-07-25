@@ -37,6 +37,7 @@ class LoginController extends Controller
     ], 201);
 }
 
+
     // Login
     public function login(LoginRequest $request)
     {
@@ -56,6 +57,8 @@ class LoginController extends Controller
         ]);
     }
 
+
+
     // Logout
     public function logout(Request $request)
     {
@@ -63,6 +66,7 @@ class LoginController extends Controller
 
         return response()->json(['message' => 'Sesión cerrada correctamente']);
     }
+
 
     // Cambiar contraseña
     public function changePassword(ChangePasswordRequest $request)
