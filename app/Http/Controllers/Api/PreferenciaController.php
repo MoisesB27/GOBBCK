@@ -9,7 +9,7 @@ use App\Models\Preferencia;
 
 class PreferenciaController extends Controller
 {
-     public function index()
+    public function index()
     {
         $preferencias = Preferencia::with('user')->paginate(15);
         return response()->json($preferencias);

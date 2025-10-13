@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Ubicacion extends Model
 {
-    use HasFactory; 
+    use HasFactory;
 
     /**
      * Los campos que pueden asignarse masivamente.

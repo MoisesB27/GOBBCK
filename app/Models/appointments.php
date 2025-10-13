@@ -9,7 +9,6 @@ use App\Models\User;
 use App\Models\Service;
 use App\Models\Pgob;
 
-
 class appointments extends Model
 {
     use HasFactory;
@@ -18,6 +17,7 @@ class appointments extends Model
         'user_id',           // Usuario que reservó la cita
         'service_id',        // Servicio para la cita
         'pgob_id',           // Punto Gob donde se realizará la cita
+        'status_id',        // Estado de la cita (relación con AppointmentStatus)
         'appointment_date',  // Fecha y hora programada
         'status',            // Estado de la cita (ej: pendiente, confirmada, cancelada)
         'assigned_to',       // Usuario asignado para atender la cita (opcional)

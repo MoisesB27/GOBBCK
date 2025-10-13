@@ -2,18 +2,24 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use app\Models\Profile;
 
+// --- NUEVOS IMPORTS ---
+use Spatie\Permission\Traits\HasRoles; // 1. Para que funcione hasRole()
+use Illuminate\Database\Eloquent\Relations\BelongsToMany; // 2. Para la relación adminPgobs()
+use Illuminate\Database\Eloquent\Relations\HasOne; // 3. Para type-hinting en profile()
 
+// Corrijo el import de tu modelo Profile
+use App\Models\Profile;
+use App\Models\Pgob; // Importo Pgob para la relación
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable;
+    // --- USO EL TRAIT HasRoles ---
+    use  HasRoles, HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -26,32 +32,18 @@ class User extends Authenticatable
         'password',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
+    public function profile(): HasOne
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->hasOne(Profile::class);
     }
 
-    public function profile()
-{
-    return $this->hasOne(Profile::class);
-}
-
+    /**
+     * Relación: Los Puntos GOB que yo administro (Many-to-Many).
+     * ¡ESTA ES LA CLAVE PARA EL FILTRO adminPgobs()!
+     */
+    public function adminPgobs(): BelongsToMany
+    {
+        // Uso la tabla pivote 'gob_point_admins' que yo creé
+        return $this->belongsToMany(Pgob::class, 'gob_point_admins', 'user_id', 'pgob_id');
+    }
 }

@@ -7,28 +7,31 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\Pgob;
 use App\Models\Service;
-use App\Models\Appointments;
-
+use App\Models\Appointments; // <-- CORRECCIÓN: Usar singular y PascalCase
 
 
 class Formulario extends Model
 {
     use HasFactory;
 
+
     protected $fillable = [
-        'user_id',        // usuario que envía el formulario (puede ser nullable si anónimo)
-        'pgob_id',        // Punto Gob relacionado
-        'service_id',     // Servicio vinculado al formulario
-        'appointment_id', // Cita vinculada (opcional)
-        'data',           // Datos JSON del formulario flexible
-        'status',         // Estado del formulario (ej: pendiete, aprobado, rechazado)
-        'submitted_at',   // Fecha y hora de envío
+        'user_id',
+        'pgob_id',
+        'tipo_de_tramite',
+        'tipo_de_beneficiario',
+        'service_id',
+        'appointment_id',
+        'status_id',
+        'submitted_at',
     ];
 
     protected $casts = [
         'data' => 'array',
         'submitted_at' => 'datetime',
     ];
+
+    // --- RELACIONES MANY-TO-ONE (BELONGS TO) ---
 
     /**
      * Relación: formulario pertenece a usuario (opcional).
@@ -59,6 +62,17 @@ class Formulario extends Model
      */
     public function appointment()
     {
+        // CORRECCIÓN: Usamos el modelo Appointment (singular)
         return $this->belongsTo(appointments::class, 'appointment_id', 'id');
+    }
+
+    /**
+     * Relación: formulario tiene un estado.
+     * CRÍTICO para el backoffice.
+     */
+    public function status()
+    {
+        // Asume que existe un modelo FormularioStatus
+        return $this->belongsTo(FormularioStatus::class, 'status_id');
     }
 }

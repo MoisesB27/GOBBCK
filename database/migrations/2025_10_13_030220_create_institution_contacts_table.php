@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('institution_contacts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('institucion_id')->constrained()->onDelete('cascade');
+            $table->foreignId('institucion_id')->constrained('instituciones')->onDelete('cascade');
             $table->enum('tipo', ['correo', 'telefono', 'whatsapp', 'otro']);
             $table->string('valor');
             $table->string('descripcion')->nullable();

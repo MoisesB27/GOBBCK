@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\User;
 use App\Models\Service;
 use App\Models\Pgob;
-
 class Notificacion extends Model
 {
     use HasFactory;

@@ -9,7 +9,7 @@ use App\Models\Testimonio;
 
 class TestimonioController extends Controller
 {
-     public function index()
+    public function index()
     {
         $testimonios = Testimonio::with('user')->paginate(15);
         return response()->json($testimonios);

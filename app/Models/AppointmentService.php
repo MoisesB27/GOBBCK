@@ -7,18 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Tramite;
-use App\Models\Institucion;
+use App\Models\Instituciones;
 use App\Models\Pgob;
-use App\Models\Appointment;
+use App\Models\appointments;
 use App\Models\Formulario;
-
-
 class AppointmentService extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'appointment_id',   
+        'appointment_id',
         'service_id',
         'quantity',
         'special_requests',

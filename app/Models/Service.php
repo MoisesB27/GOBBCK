@@ -3,16 +3,17 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Institucion;
+use App\Models\Instituciones;
 use App\Models\Pgob;
 use App\Models\Tramite;
+use App\Models\ServiceStatus;
+use App\Models\appointments;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-
 class Service extends Model
 {
 
     use HasFactory;
-   
+
     protected $fillable = [
         'name',
         'slug',
@@ -22,7 +23,7 @@ class Service extends Model
         'tramite_id',
         'institucion_id',
         'ubicacion',
-        'status',
+        'status_id',
         'pgob_id',
     ];
 
@@ -58,4 +59,19 @@ class Service extends Model
     {
         return $this->belongsTo(Pgob::class, 'pgob_id', 'id');
     }
+
+    public function status()
+    {
+        // Se relaciona con la nueva tabla de referencia service_statuses
+        return $this->belongsTo(ServiceStatus::class, 'status_id');
+    }
+
+    public function appointments()
+    {
+        // Nota: Los servicios pueden estar en varias citas a través de la tabla pivote 'appointment_services'
+        return $this->belongsToMany(appointments::class, 'appointment_services')
+                    ->withPivot('quantity', 'special_requests')
+                    ->withTimestamps();
+    }
+
 }

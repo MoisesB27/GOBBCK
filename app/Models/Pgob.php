@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
+use App\Models\GobPointAdmin;
+use App\Models\appointments;
+use App\Models\Soporte;
 use App\Models\Service;
 use App\Models\Ubicacion;
-
 class Pgob extends Model
 {
     use HasFactory;
@@ -23,6 +26,7 @@ class Pgob extends Model
         'business_hours',
         'appointment_limit',
         'appointment_limit_per_user',
+        'is_active',
     ];
 
     /**
@@ -34,6 +38,7 @@ class Pgob extends Model
         'business_hours' => 'array',
         'appointment_limit' => 'integer',
         'appointment_limit_per_user' => 'integer',
+        'is_active' => 'boolean',
     ];
 
     /**
@@ -53,4 +58,28 @@ class Pgob extends Model
     {
         return $this->hasMany(Ubicacion::class, 'pgob_id', 'id');
     }
+
+    public function admins()
+    {
+        return $this->belongsToMany(User::class, 'gob_point_admins', 'pgob_id', 'user_id')
+                    ->using(GobPointAdmin::class);
+    }
+
+    /**
+     * Citas agendadas en este Punto GOB.
+     * Necesario para los gráficos y el filtrado del Dashboard
+     */
+    public function appointments()
+    {
+        return $this->hasMany(appointments::class, 'pgob_id');
+    }
+
+    /**
+     * Soportes asociados a este Punto GOB.
+     */
+    public function soportes()
+    {
+        return $this->hasMany(Soporte::class, 'pgob_id');
+    }
 }
+

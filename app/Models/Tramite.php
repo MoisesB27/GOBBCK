@@ -4,15 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Institucion;
+use App\Models\Instituciones;
 use App\Models\Service;
-
-
 class Tramite extends Model
 {
 
     use HasFactory;
-    
+
     protected $fillable = [
         'name',
         'description',

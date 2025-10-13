@@ -18,6 +18,8 @@ return new class extends Migration
             $table->json('business_hours')->nullable();
             $table->integer('appointment_limit')->default(0);
             $table->integer('appointment_limit_per_user')->default(0);
+            $table->boolean('is_active')->default(true)->comment('Indica si el Punto GOB está activo y recibiendo citas.');
+
             $table->timestamps();
 
         });

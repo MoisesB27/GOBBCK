@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('gob_point_admins', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('pgob_id')->constrained('puntos_gob')->onDelete('cascade');
+            $table->foreignId('pgob_id')->constrained('pgobs')->onDelete('cascade');
             $table->timestamps();
 
             $table->unique(['user_id', 'pgob_id']);
