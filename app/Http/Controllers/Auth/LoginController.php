@@ -10,36 +10,59 @@ use App\Models\User;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class LoginController extends Controller
 {
     // Registro
     public function register(RegisterRequest $request)
 {
-    $request->validate([
+    //  Verificar que llega al método
+    $validator = Validator::make($request->all(), [
         'name' => 'required|string|max:255',
-        'email' => 'required|string|email|max:255|unique:users',
-        'password' => 'required|string|min:8|confirmed',
+        'email' => 'required|email|unique:users',
+        'password' => 'required|min:8|confirmed',
     ]);
 
-    $user = User::create([
-        'name' => $request->name,
-        'email' => $request->email,
-        'password' => Hash::make($request->password),
-    ]);
+    if ($validator->fails()) {
+        return response()->json([
+            'debug_step' => '1 - VALIDATION FAILED',
+            'errors' => $validator->errors()
+        ], 422);
+    }
 
-    $token = $user->createToken('auth_token')->plainTextToken;
+    try {
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
 
-    return response()->json([
-        'data' => $user,
-        'access_token' => $token,
-        'token_type' => 'Bearer',
-    ], 201);
-}
+         // Generar token de autenticación
+        $token = $user->createToken('auth_token')->plainTextToken;
 
+        return response()->json([
+            'success' => true,
+            'message' => 'Usuario registrado exitosamente',
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email
+            ],
+            'access_token' => $token,
+            'token_type' => 'Bearer'
+        ], 201);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'error' => 'Error al registrar usuario: ' . $e->getMessage()
+        ], 500);}
+
+    }
 
     // Login
-    public function login(LoginRequest $request)
+        public function login(LoginRequest $request)
     {
         $user = User::where('email', $request->email)->first();
 
@@ -84,4 +107,4 @@ class LoginController extends Controller
 
         return response()->json(['message' => 'Contraseña cambiada correctamente.']);
     }
-}
+    }

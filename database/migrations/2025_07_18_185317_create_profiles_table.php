@@ -26,10 +26,10 @@ return new class extends Migration
 
             // Relación con users
             $table->foreign('user_id')
-                  ->references('id')
-                  ->on('users')
-                  ->onDelete('cascade');
-            
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
+
             // Para relación uno-a-uno (si aplica)
             $table->unique('user_id');
         });

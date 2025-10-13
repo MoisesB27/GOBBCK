@@ -29,12 +29,8 @@ return new class extends Migration
             $table->unsignedBigInteger('appointment_id')->nullable();
 
             $table->string('tipo_tramite');
+            $table->enum('tipo_beneficiario', ['para_mi', 'otra_persona', 'menor'])->default('para_mi');
 
-            // Para casos donde un mayor agenda para un menor
-            $table->boolean('agenda_a_menor')->default(false);
-            $table->string('nombre_menor')->nullable();
-            $table->string('apellido_menor')->nullable();
-            $table->string('cedula_menor')->nullable();
 
             // Fecha y hora de la cita
             $table->date('fecha_cita');

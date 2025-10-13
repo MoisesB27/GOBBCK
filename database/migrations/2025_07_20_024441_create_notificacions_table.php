@@ -21,30 +21,30 @@ return new class extends Migration
             $table->enum('tipo', ['info', 'alerta', 'recomendacion'])->default('info');
             $table->boolean('is_read')->default(false);
             $table->json('metadata')->nullable();
-            
+
             // Asegúrate que coincida con el tipo en services y pgobs
             $table->unsignedBigInteger('service_id')->nullable();
             $table->unsignedBigInteger('pgob_id')->nullable();
-            
+
             $table->timestamps();
 
             // Claves foráneas con comprobación de existencia
             if (Schema::hasTable('users')) {
                 $table->foreign('user_id')
-                      ->references('id')->on('users')
-                      ->onDelete('cascade');
+                    ->references('id')->on('users')
+                    ->onDelete('cascade');
             }
 
             if (Schema::hasTable('services')) {
                 $table->foreign('service_id')
-                      ->references('id')->on('services')
-                      ->onDelete('set null');
+                    ->references('id')->on('services')
+                    ->onDelete('set null');
             }
 
             if (Schema::hasTable('pgobs')) {
                 $table->foreign('pgob_id')
-                      ->references('id')->on('pgobs')
-                      ->onDelete('set null');
+                    ->references('id')->on('pgobs')
+                    ->onDelete('set null');
             }
 
             $table->index(['user_id', 'is_read']);

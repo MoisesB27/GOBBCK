@@ -7,12 +7,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
-use Pest\Plugins\Profile;
+use App\Models\User;
 
-class User extends Authenticatable
+class Profile extends Authenticatable
 {
     use HasFactory, Notifiable;
-
 
     protected $fillable = [
         'name',
@@ -26,6 +25,7 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    // Cambiado de función a propiedad para $casts
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
@@ -47,9 +47,9 @@ class User extends Authenticatable
      *
      * @return HasOne
      */
-    public function profile(): HasOne
+    public function User(): HasOne
     {
-        return $this->hasOne(Profile::class, 'user_id', 'id');
+        return $this->hasOne(User::class, 'user_id', 'id');
     }
 
     // Otras relaciones y métodos según tu proyecto...

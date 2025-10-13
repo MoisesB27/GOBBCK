@@ -12,7 +12,7 @@ use App\Models\Pgob;
 
 class appointments extends Model
 {
-   use HasFactory;
+    use HasFactory;
 
     protected $fillable = [
         'user_id',           // Usuario que reservó la cita
