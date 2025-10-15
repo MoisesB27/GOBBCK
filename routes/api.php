@@ -54,7 +54,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Perfil del Usuario Logueado (GET /api/profile)
     // El método 'show' aquí cargará el perfil del usuario autenticado, no por ID
-    Route::get('profile', [ProfileController::class, 'show']);
+    Route::get('profile', [ProfileController::class, 'show', 'store', 'update']);
+    Route::post('testimonios', [TestimonioController::class, 'store']); // Permitir que usuarios creen testimonioss
+
+
 
     // Módulos transaccionales y de usuario (la seguridad se gestiona DENTRO del controlador)
     Route::apiResource('historiales', HistorialController::class)->only(['index', 'show', 'store', 'destroy']);
