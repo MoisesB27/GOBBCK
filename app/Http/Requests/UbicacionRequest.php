@@ -13,7 +13,7 @@ class UbicacionRequest extends FormRequest
 
     public function rules()
     {
-         return [
+        return [
             'name' => 'required|string|max:255',
             'tipo' => 'required|string|max:100',
             'latitude' => 'required|numeric|between:-90,90',
