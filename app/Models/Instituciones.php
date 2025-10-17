@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\Tramite;
 use App\Models\Service;
 use App\Models\InstitutionContact; // Importo el nuevo modelo de contactos
+
 class Instituciones extends Model
 {
     use HasFactory;
@@ -15,7 +16,6 @@ class Instituciones extends Model
 
         'nombre',
         'sigla'
-        // Agrego otros campos que tengo en mi tabla si es necesario.
     ];
 
     /**
@@ -33,10 +33,8 @@ class Instituciones extends Model
     {
         return $this->hasMany(Service::class, 'institucion_id', 'id');
     }
-
     /**
-     * Relación: Tengo varios contactos (teléfono, email, etc.).
-     * ¡CRÍTICO para mi módulo de Instituciones!
+     * Relación: Tengo muchos contactos.
      */
     public function contacts()
     {

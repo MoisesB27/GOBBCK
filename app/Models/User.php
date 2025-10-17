@@ -28,9 +28,25 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'cedula',
         'email',
         'password',
     ];
+
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::created(function ($user) {
+            // Asignar el rol 'usuario' por defecto si el usuario no tiene roles al momento de la creación.
+            // Esto es CRÍTICO para resolver el error 403 en nuevos registros.
+            if (!$user->hasAnyRole(['superadmin', 'admin'])) {
+                $user->assignRole('usuario');
+            }
+        });
+    }
+
 
     public function profile(): HasOne
     {

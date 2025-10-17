@@ -14,10 +14,11 @@ return new class extends Migration
         Schema::create('testimonios', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('username')->nullable(); // ej: @juanahernandez_
+            $table->string('email')->nullable();
             $table->text('message');
             $table->tinyInteger('rating')->default(5); // de 1 a 5
             $table->string('photo_url')->nullable(); // URL de imagen
+
             $table->timestamps();
         });
     }

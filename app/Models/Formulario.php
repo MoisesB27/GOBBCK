@@ -16,6 +16,12 @@ class Formulario extends Model
 
 
     protected $fillable = [
+        'nombre',
+        'apellido',
+        'email',
+        'cedula',
+        'direccion',
+        'telefono',
         'user_id',
         'pgob_id',
         'tipo_de_tramite',

@@ -34,7 +34,14 @@ class FormularioController extends Controller
     public function show($id)
     {
         // Cargamos la nueva relación 'status'
-        $formulario = Formulario::with(['user', 'pgob', 'service', 'appointment', 'status'])->findOrFail($id);
+        $formulario = Formulario::with([
+        'user_id',
+        'pgob_id',
+        'tipo_de_tramite',
+        'tipo_de_beneficiario',
+        'service_id',
+        'appointment_id',
+        'status_id'])->findOrFail($id);
 
         return response()->json($formulario);
     }

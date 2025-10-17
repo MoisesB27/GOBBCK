@@ -69,8 +69,7 @@ class Service extends Model
     public function appointments()
     {
         // Nota: Los servicios pueden estar en varias citas a través de la tabla pivote 'appointment_services'
-        return $this->belongsToMany(appointments::class, 'appointment_services')
-                    ->withPivot('quantity', 'special_requests')
+        return $this->belongsToMany(appointments::class, 'appointment_services')->withPivot('quantity', 'special_requests')
                     ->withTimestamps();
     }
 

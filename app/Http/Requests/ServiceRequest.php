@@ -23,7 +23,7 @@ class ServiceRequest extends FormRequest
             'tramite_id'    => 'required|exists:tramites,id',
             'institucion_id'=> 'required|exists:instituciones,id',
             'ubicacion'     => 'nullable|string|max:255',
-            'status'        => 'nullable|string|max:50',
+            'status_id'        => 'nullable|string|max:50',
             'pgob_id'       => 'nullable|exists:pgobs,id',
         ];
     }

@@ -3,24 +3,30 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use App\Models\User;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-use Carbon\Carbon;
 
 class UsersSeeder extends Seeder
 {
-    public function run()
+    /**
+     *
+     * @return void
+     */
+    public function run(): void
     {
-        // Insertar usuario de ejemplo en tabla users
-        DB::table('users')->insert([
-            'name' => 'Moises',
-            'email' => 'moises27@gmail.com',
-            'email_verified_at' => Carbon::now(),
-            'password' => Hash::make('12345678'), // contraseña encriptada
-            'remember_token' => Str::random(10),
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now(),
-        ]);
+        $superAdmin = User::firstOrCreate(
+            [
+                'email' => 'moises@example.com',
+            ],
+            [
+                'name' => 'Moises Batista',
+                'cedula' => '40212345678',
+                'password' => Hash::make('Password123@'),
+            ]
+        );
+
+        // Aseguramos que solo tenga el rol de superadmin
+        $superAdmin->syncRoles(['superadmin']);
+        $this->command->info('Usuario SuperAdmin (Moises) asegurado.');
     }
 }

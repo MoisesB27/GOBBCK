@@ -19,9 +19,7 @@ return new class extends Migration
             $table->string('cedula')->unique()->nullable();
             $table->enum('sexo', ['masculino', 'femenino', 'otro'])->nullable();
             $table->text('direccion')->nullable();
-            $table->string('avatar_url')->nullable();
             $table->string('phone')->nullable();
-            $table->date('date_of_birth')->nullable();
             $table->timestamps();
 
             // Relación con users

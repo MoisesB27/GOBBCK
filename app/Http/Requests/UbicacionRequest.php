@@ -3,12 +3,14 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class UbicacionRequest extends FormRequest
 {
-    public function authorize()
+    public function authorize(): bool
+
     {
-        return true; // Ajusta autorización según tu lógica
+        return Auth::check() && Auth::user()->hasRole('superadmin');
     }
 
     public function rules()
@@ -25,8 +27,6 @@ class UbicacionRequest extends FormRequest
             'contacto' => 'nullable|string|max:255',
             'radio_cobertura' => 'nullable|integer|min:0',
             'extras' => 'nullable|array',
-            'extras.*' => 'sometimes|string',  // Si es array de strings
-            'pgob_id' => 'required|uuid|exists:pgobs,id',
         ];
     }
 }

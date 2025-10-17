@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Pgob;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Ubicacion extends Model
@@ -28,7 +27,6 @@ class Ubicacion extends Model
         'contacto',
         'radio_cobertura',
         'extras',
-        'pgob_id',
     ];
 
     /**
@@ -43,13 +41,4 @@ class Ubicacion extends Model
         'extras' => 'array',
     ];
 
-    /**
-     * Relación: Ubicación pertenece a un Punto Gob.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function pgob()
-    {
-        return $this->belongsTo(Pgob::class, 'pgob_id', 'id');
-    }
 }

@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth; // Necesario para la autorización
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -53,11 +53,9 @@ class UserController extends Controller
         // 1. Validación de datos (incluyendo roles)
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'cedula' => 'nullable|string|max:13|unique:users,cedula',
             'email' => 'required|email|string|unique:users,email',
             'password' => 'required|string|min:6',
-            // Campo opcional para asignar roles al crear
-            'roles' => 'sometimes|array',
-            'roles.*' => 'string|exists:roles,name', // Valida que el rol exista
         ]);
 
         // 2. Hash del password
@@ -90,10 +88,9 @@ class UserController extends Controller
         // 1. Validación de datos
         $validated = $request->validate([
             'name' => 'sometimes|required|string|max:255',
+            'cedula' => 'sometimes|nullable|string|max:13|unique:users,cedula,' . $user->id,
             'email' => 'sometimes|required|email|string|unique:users,email,' . $user->id,
             'password' => 'sometimes|nullable|string|min:6',
-            'roles' => 'sometimes|array',
-            'roles.*' => 'string|exists:roles,name',
         ]);
 
         // 2. Manejo de password

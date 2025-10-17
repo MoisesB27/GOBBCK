@@ -14,10 +14,13 @@ class Profile extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $fillable = [
-        'name',
-        'email',
-        'password',
-        // otros campos que tengas
+        'user_id',
+        'first_name',
+        'last_name',
+        'cedula',
+        'sexo',
+        'direccion',
+        'phone',
     ];
 
     protected $hidden = [

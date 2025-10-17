@@ -24,13 +24,7 @@ return new class extends Migration
             $table->string('contacto')->nullable(); // Teléfono o mail de contacto
             $table->integer('radio_cobertura')->default(10); // Radio de cobertura en km
             $table->json('extras')->nullable(); // Para comentarios, horarios, etc.
-            $table->unsignedBigInteger('pgob_id');
             $table->timestamps();
-
-            $table->foreign('pgob_id')
-                ->references('id')
-                ->on('pgobs')
-                ->onDelete('cascade');
 
         });
     }
