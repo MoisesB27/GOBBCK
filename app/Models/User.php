@@ -62,4 +62,5 @@ class User extends Authenticatable
         // Uso la tabla pivote 'gob_point_admins' que yo creé
         return $this->belongsToMany(Pgob::class, 'gob_point_admins', 'user_id', 'pgob_id');
     }
+
 }

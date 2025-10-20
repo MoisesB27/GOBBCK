@@ -25,7 +25,7 @@ class InstitutionContact extends Model
      */
     public function institucion()
     {
-        // Asume que tu modelo para Instituciones se llama Institucion.
+        // modelo para Instituciones se llama Institucion.
         return $this->belongsTo(Instituciones::class, 'institucion_id');
     }
 }

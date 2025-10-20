@@ -21,6 +21,24 @@ class TramiteController extends Controller
         return response()->json($tramite, 201);
     }
 
+    public function storeByInstitucion(TramiteRequest $request, $institucionId)
+{
+    // Validar datos recibidos según sea necesario
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'institucion_id' => 'sometimes|exists:instituciones,id',
+        'mandatory_fields' => 'nullable|array',
+    ]);
+
+    // Asociar el trámite con la institución recibida como parámetro
+    $validated['institucion_id'] = $institucionId;
+
+    $tramite = Tramite::create($validated);
+
+    return response()->json($tramite, 201);
+}
+
     public function show(Tramite $tramite)
     {
         return response()->json($tramite);

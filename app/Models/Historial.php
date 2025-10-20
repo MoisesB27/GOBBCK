@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\User;
 use App\Models\Service;
-use App\Models\Institucion;
 use App\Models\Appointments;
 use App\Models\Appointment_Access_Log;
 

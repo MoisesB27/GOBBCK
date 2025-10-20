@@ -8,12 +8,9 @@ use Illuminate\Support\Facades\Hash;
 
 class UsersSeeder extends Seeder
 {
-    /**
-     *
-     * @return void
-     */
     public function run(): void
     {
+        // Usuario superadmin existente
         $superAdmin = User::firstOrCreate(
             [
                 'email' => 'moises@example.com',
@@ -24,9 +21,35 @@ class UsersSeeder extends Seeder
                 'password' => Hash::make('Password123@'),
             ]
         );
-
-        // Aseguramos que solo tenga el rol de superadmin
         $superAdmin->syncRoles(['superadmin']);
         $this->command->info('Usuario SuperAdmin (Moises) asegurado.');
+
+        // Segundo usuario
+        $nuevoUsuario = User::firstOrCreate(
+            [
+                'email' => 'ana@example.com',
+            ],
+            [
+                'name' => 'Ana Gómez',
+                'cedula' => '40123456789',
+                'password' => Hash::make('PasswordAna123@'),
+            ]
+        );
+        $nuevoUsuario->syncRoles(['usuario']);
+        $this->command->info('Usuario Ana Gómez asegurado.');
+
+        // Tercer usuario con rol admin
+        $adminUsuario = User::firstOrCreate(
+            [
+                'email' => 'admin@example.com',
+            ],
+            [
+                'name' => 'Carlos Admin',
+                'cedula' => '40345678901',
+                'password' => Hash::make('PasswordAdmin123@'),
+            ]
+        );
+        $adminUsuario->syncRoles(['admin']);
+        $this->command->info('Usuario Admin (Carlos) asegurado.');
     }
 }

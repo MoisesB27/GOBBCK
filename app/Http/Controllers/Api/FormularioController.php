@@ -37,8 +37,8 @@ class FormularioController extends Controller
         $formulario = Formulario::with([
         'user_id',
         'pgob_id',
-        'tipo_de_tramite',
-        'tipo_de_beneficiario',
+        'tipo_tramite',
+        'tipo_beneficiario',
         'service_id',
         'appointment_id',
         'status_id'])->findOrFail($id);

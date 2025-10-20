@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('ubicacions', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // Nombre de la sede o sucursal
+            $table->foreignId('pgob_id')->constrained('pgobs')->onDelete('cascade');
             $table->string('tipo')->nullable(); // Sucursal principal, móvil, etc.
             $table->decimal('latitude', 10, 7); // Coordenada precisa
             $table->decimal('longitude', 10, 7); // Coordenada precisa

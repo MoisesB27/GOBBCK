@@ -3,39 +3,45 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Instituciones; // Necesito la institución padre
-use App\Models\InstitutionContact; // Mi modelo de contacto
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
+use App\Models\Instituciones;
+use App\Models\InstitutionContact;
+use App\Http\Requests\InstitutionContactRequest;
+
 
 class InstitutionContactController extends Controller
 {
     /**
      * Muestro todos los contactos que tengo para una Institución específica.
-     * (Asumo que esta ruta está anidada: /instituciones/{institucion}/contacts)
      */
     public function index(Instituciones $institucion)
     {
-        // Cargo los contactos usando la relación que definí en mi modelo Instituciones.
-        $contacts = $institucion->contacts;
+        $contacts = $institucion->contacts()->orderByDesc('principal')->get();
         return response()->json($contacts);
     }
 
     /**
-     * Guardo un nuevo contacto para esta Institución.
+     * Guardo un nuevo contacto para esta Institución, usando el Form Request para la validación.
      */
-    public function store(Request $request, Instituciones $institucion)
+    public function store(InstitutionContactRequest $request, Instituciones $institucion)
     {
-        // 1. Valido los datos: tipo, valor, y si es principal.
-        $validated = $request->validate([
-            'tipo' => ['required', Rule::in(['correo', 'telefono', 'whatsapp', 'otro'])],
-            'valor' => 'required|string|max:255',
-            'descripcion' => 'nullable|string|max:255',
-            'principal' => 'sometimes|boolean',
+        $validated = $request->validated();
+
+        // 1. **SOLUCIÓN DEL ERROR 1048**: Añadimos explícitamente el ID de la institución
+        // al array validado, asegurando que esté presente cuando se llame a `create()`.
+        $data = array_merge($validated, [
+            'institucion_id' => $institucion->id,
         ]);
 
-        // 2. Asocio el contacto a mi institución y lo creo.
-        $contact = $institucion->contacts()->create($validated);
+        // 2. Si el nuevo contacto se marca como principal (true), desmarcamos a los demás.
+        if (isset($data['principal']) && $data['principal']) {
+            $institucion->contacts()->update(['principal' => false]);
+        }
+
+        // 3. Creamos el nuevo contacto usando el array $data completo.
+        // Nota: En este caso, ya que estamos pasando el ID explícitamente, podríamos
+        // usar InstitutionContact::create($data); en lugar de la relación,
+        // pero usar la relación también funciona si el ID está en el array.
+        $contact = $institucion->contacts()->create($data);
 
         return response()->json($contact, 201);
     }
@@ -43,24 +49,32 @@ class InstitutionContactController extends Controller
     /**
      * Muestro un contacto individual.
      */
-    public function show(InstitutionContact $contact)
+    public function show(Instituciones $institucion, InstitutionContact $contact)
     {
+        if ($contact->institucion_id !== $institucion->id) {
+            // Usar abort(404) es más idiomático para not found
+            abort(404, 'Contacto no encontrado para esta institución.');
+        }
+
         return response()->json($contact);
     }
 
     /**
-     * Actualizo un contacto existente.
+     * Actualizo un contacto existente, usando el Form Request para la validación.
      */
-    public function update(Request $request, InstitutionContact $contact)
+    public function update(InstitutionContactRequest $request, Instituciones $institucion, InstitutionContact $contact)
     {
-        // Valido solo los campos que pueden cambiar.
-        $validated = $request->validate([
-            'tipo' => ['sometimes', Rule::in(['correo', 'telefono', 'whatsapp', 'otro'])],
-            'valor' => 'sometimes|string|max:255',
-            'descripcion' => 'nullable|string|max:255',
-            'principal' => 'sometimes|boolean',
-        ]);
+        $validated = $request->validated();
 
+        // 1. Si se intenta marcar este contacto como principal (principal = true):
+        if (isset($validated['principal']) && $validated['principal']) {
+            // Desmarcamos a los demás contactos de esta institución.
+            $institucion->contacts()
+                        ->where('id', '!=', $contact->id)
+                        ->update(['principal' => false]);
+        }
+
+        // 2. Actualizamos el contacto.
         $contact->update($validated);
 
         return response()->json($contact);
@@ -69,8 +83,12 @@ class InstitutionContactController extends Controller
     /**
      * Elimino un contacto.
      */
-    public function destroy(InstitutionContact $contact)
+    public function destroy(Instituciones $institucion, InstitutionContact $contact)
     {
+        if ($contact->institucion_id !== $institucion->id) {
+            abort(403, 'No autorizado para eliminar este contacto.');
+        }
+
         $contact->delete();
         return response()->json(null, 204);
     }

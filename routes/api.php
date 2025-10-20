@@ -52,6 +52,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [LoginController::class, 'logout']);
     Route::post('change-password', [LoginController::class, 'changePassword']);
 
+
     // GESTIÓN DE PERFIL DEL USUARIO (GET/PUT/PATCH /api/profile)
     // Se usa 'apiResource' con 'only' para manejar show (GET) y update (PUT/PATCH) en el controlador.
     Route::apiResource('profile', ProfileController::class)->only(['show', 'update']);
@@ -67,6 +68,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('soportes', SoporteController::class)->only(['index', 'show', 'store']);
 
     // El cliente puede ver, crear, y actualizar (cancelar/modificar) sus citas.
+    Route::apiResource('formularios', FormularioController::class)->only(['index', 'show', 'store', 'update']);
     Route::apiResource('appointments', AppointmentsController::class)->only(['index', 'show', 'store', 'update']);
 
     // Rutas de data personal del usuario
@@ -122,6 +124,7 @@ Route::middleware('auth:sanctum')->group(function () {
         // GESTIÓN DE ESTRUCTURA Y DATA MAESTRA (CRUD completo y asegurado)
         Route::apiResource('pgobs', PgobController::class);
         Route::apiResource('services', ServiceController::class);
+        Route::post('instituciones/{id}/tramites', [TramiteController::class, 'storeByInstitucion']);
         Route::apiResource('tramites', TramiteController::class);
         Route::apiResource('instituciones', InstitucionesController::class);
 

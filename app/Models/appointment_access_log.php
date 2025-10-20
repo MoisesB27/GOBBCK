@@ -38,6 +38,6 @@ class appointment_access_log extends Model
      */
     public function appointment(): BelongsTo
     {
-        return $this->belongsTo(appointments::class, 'appointment_id', 'id');
+        return $this->belongsTo(Appointments::class, 'appointment_id', 'id');
     }
 }

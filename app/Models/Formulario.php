@@ -7,13 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\Pgob;
 use App\Models\Service;
-use App\Models\Appointments; // <-- CORRECCIÓN: Usar singular y PascalCase
-
+use App\Models\Appointments;
+use App\Models\FormularioStatus;
 
 class Formulario extends Model
 {
     use HasFactory;
-
 
     protected $fillable = [
         'nombre',
@@ -22,10 +21,11 @@ class Formulario extends Model
         'cedula',
         'direccion',
         'telefono',
+        'discapacidad',
         'user_id',
         'pgob_id',
-        'tipo_de_tramite',
-        'tipo_de_beneficiario',
+        'tipo_tramite',
+        'tipo_beneficiario',
         'service_id',
         'appointment_id',
         'status_id',
@@ -37,48 +37,29 @@ class Formulario extends Model
         'submitted_at' => 'datetime',
     ];
 
-    // --- RELACIONES MANY-TO-ONE (BELONGS TO) ---
-
-    /**
-     * Relación: formulario pertenece a usuario (opcional).
-     */
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    /**
-     * Relación: formulario pertenece a Punto Gob.
-     */
     public function pgob()
     {
         return $this->belongsTo(Pgob::class, 'pgob_id', 'id');
     }
 
-    /**
-     * Relación: formulario pertenece a un servicio.
-     */
     public function service()
     {
         return $this->belongsTo(Service::class, 'service_id', 'id');
     }
 
-    /**
-     * Relación: formulario pertenece a una cita (opcional).
-     */
     public function appointment()
     {
-        // CORRECCIÓN: Usamos el modelo Appointment (singular)
-        return $this->belongsTo(appointments::class, 'appointment_id', 'id');
+        // Aquí corregimos el modelo a Appointment (singular)
+        return $this->belongsTo(Appointments::class, 'appointment_id', 'id');
     }
 
-    /**
-     * Relación: formulario tiene un estado.
-     * CRÍTICO para el backoffice.
-     */
     public function status()
     {
-        // Asume que existe un modelo FormularioStatus
         return $this->belongsTo(FormularioStatus::class, 'status_id');
     }
 }

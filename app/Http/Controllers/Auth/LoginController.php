@@ -32,11 +32,15 @@ class LoginController extends Controller
     }
 
     try {
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
+
+        // Asignar el rol 'usuario' al usuario recién creado
+        $user->assignRole('usuario');
 
          // Generar token de autenticación
         $token = $user->createToken('auth_token')->plainTextToken;

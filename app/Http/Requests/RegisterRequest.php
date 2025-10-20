@@ -17,6 +17,7 @@ class RegisterRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
+            'cedula' => 'required|string|max:12|unique:users,cedula',
             'email' => 'required|email|string|unique:users,email',
             'password' => 'required|string|min:8|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/',
         ];
@@ -26,6 +27,7 @@ class RegisterRequest extends FormRequest
     {
         return [
             'name.required' => 'El nombre es obligatorio.',
+            'cedula.required' => 'La cédula es obligatoria.',
             'email.required' => 'El correo electrónico es obligatorio.',
             'email.unique' => 'El correo electrónico ya está en uso.',
             'password.required' => 'La contraseña es obligatoria.',

@@ -11,7 +11,11 @@ class TicketStatus extends Model
 
     protected $table = 'ticket_statuses';
 
-    protected $fillable = ['name', 'priority_level', 'color_code', 'is_active'];
+    protected $fillable = [
+        'name',
+        'priority_level',
+        'color_code',
+        'is_active'];
 
     // Relación One-to-Many: Un estado puede tener muchos tickets (Soportes).
     public function soportes()

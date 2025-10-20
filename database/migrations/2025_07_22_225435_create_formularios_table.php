@@ -18,17 +18,19 @@ return new class extends Migration
             $table->string('nombre');
             $table->string('apellido');
             $table->string('email');
-            $table->string('cedula')->nullable();
-            $table->string('direccion')->nullable();
-            $table->string('telefono')->nullable();
+            $table->string('cedula');
+            $table->string('direccion');
+            $table->string('telefono');
+            $table->boolean('discapacidad')->nullable();
 
             // Relaciones
             $table->unsignedBigInteger('user_id')->nullable();
             $table->unsignedBigInteger('institucion_id');
-            $table->unsignedBigInteger('pgob_id');
+            $table->unsignedBigInteger('pgob_id')->nullable();
             $table->unsignedBigInteger('appointment_id')->nullable();
+            $table->unsignedBigInteger('tramite_id')->nullable();
 
-            $table->string('tipo_tramite');
+
             $table->enum('tipo_beneficiario', ['para_mi', 'otra_persona', 'menor'])->default('para_mi');
 
 
@@ -40,6 +42,7 @@ return new class extends Migration
 
             // Claves foráneas
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('tramite_id')->references('id')->on('tramites')->onDelete('cascade');
             $table->foreign('institucion_id')->references('id')->on('instituciones')->onDelete('cascade');
             $table->foreign('pgob_id')->references('id')->on('pgobs')->onDelete('cascade');
             $table->foreign('appointment_id')->references('id')->on('appointments')->onDelete('cascade');

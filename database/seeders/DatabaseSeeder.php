@@ -19,6 +19,5 @@ class DatabaseSeeder extends Seeder
         // Llamar al seeder de usuarios iniciales
         $this->call(UsersSeeder::class);
 
-
     }
 }

@@ -81,7 +81,7 @@ class UserController extends Controller
     {
         $authUser = Auth::user();
 
-        if ($authUser->id !== $user->id && !$authUser->hasRole('super-admin')) {
+        if ($authUser->id !== $user->id && !$authUser->hasRole('superadmin')) {
             return response()->json(['message' => 'No autorizado para editar este usuario.'], 403);
         }
 
@@ -101,7 +101,7 @@ class UserController extends Controller
         }
 
         // 3. Sincronizar roles (solo si se proporciona el campo 'roles' y el Auth::user() es admin)
-        if (isset($validated['roles']) && $authUser->hasRole('super-admin')) {
+        if (isset($validated['roles']) && $authUser->hasRole('superadmin')) {
             // syncRoles reemplaza todos los roles existentes con la nueva lista
             $user->syncRoles($validated['roles']);
             // Remuevo 'roles' de validated para que no intente actualizar un campo inexistente en la tabla 'users'
@@ -124,7 +124,7 @@ class UserController extends Controller
     {
         // Autorización: Solo 'super-admin' puede eliminar
         $authUser = Auth::user();
-        if (!$authUser->hasRole('super-admin')) {
+        if (!$authUser->hasRole('superadmin')) {
             return response()->json(['message' => 'No autorizado para eliminar usuarios.'], 403);
         }
 

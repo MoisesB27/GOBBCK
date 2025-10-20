@@ -27,6 +27,7 @@ class UbicacionRequest extends FormRequest
             'contacto' => 'nullable|string|max:255',
             'radio_cobertura' => 'nullable|integer|min:0',
             'extras' => 'nullable|array',
+            'pgob_id' => 'nullable|exists:pgobs,id',
         ];
     }
 }

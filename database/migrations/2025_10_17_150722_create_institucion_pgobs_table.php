@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('instituciones', function (Blueprint $table) {
-            $table->id(); // ID autoincremental estándar (BIGINT UNSIGNED)
-            $table->string('nombre');
-            $table->string('sigla')->nullable();
+        Schema::create('institucion_pgob', function (Blueprint $table) {
+            $table->foreignId('institucion_id')->constrained('instituciones')->onDelete('cascade');
+            $table->foreignId('pgob_id')->constrained('pgobs')->onDelete('cascade');
+            $table->primary(['institucion_id', 'pgob_id']);
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('instituciones');
+        Schema::dropIfExists('institucion_pgobs');
     }
 };

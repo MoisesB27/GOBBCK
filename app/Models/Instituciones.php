@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use App\Models\Pgob;
 use App\Models\Tramite;
 use App\Models\Service;
 use App\Models\InstitutionContact; // Importo el nuevo modelo de contactos
@@ -15,7 +17,7 @@ class Instituciones extends Model
     protected $fillable = [
 
         'nombre',
-        'sigla'
+        'sigla',
     ];
 
     /**
@@ -24,6 +26,13 @@ class Instituciones extends Model
     public function tramites()
     {
         return $this->hasMany(Tramite::class, 'institucion_id', 'id');
+    }
+
+    public function pgobs(): BelongsToMany
+    {
+        // Usa la tabla pivote 'institucion_pgob' para vincular con el modelo Pgob.
+        // Los argumentos son explícitos para asegurar que usemos tus nombres de columna.
+        return $this->belongsToMany(Pgob::class, 'institucion_pgob', 'institucion_id', 'pgob_id');
     }
 
     /**

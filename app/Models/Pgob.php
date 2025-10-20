@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Models\User;
 use App\Models\GobPointAdmin;
 use App\Models\appointments;
@@ -50,6 +51,14 @@ class Pgob extends Model
     {
         return $this->hasMany(Service::class, 'pgob_id', 'id');
     }
+
+
+    public function instituciones(): BelongsToMany
+    {
+        // Usa la tabla pivote 'institucion_pgob' para vincular con el modelo Institucion.
+        return $this->belongsToMany(Instituciones::class, 'institucion_pgob', 'pgob_id', 'institucion_id');
+    }
+
 
     /**
      * Ubicaciones asociadas a este pgob.

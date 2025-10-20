@@ -27,6 +27,7 @@ class Ubicacion extends Model
         'contacto',
         'radio_cobertura',
         'extras',
+        'pgob_id',
     ];
 
     /**
