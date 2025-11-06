@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id(); // ID autoincremental estándar (BIGINT UNSIGNED)
             $table->string('nombre');
             $table->string('sigla')->nullable();
+            $table->enum('Estado', ['Activa', 'Inactiva', 'Pendiente'])->default('Pendiente') ->comment('Estado de la institución');
+            $table->string('Encargado')->nullable();
             $table->timestamps();
         });
     }

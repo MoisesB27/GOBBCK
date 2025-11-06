@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ServiceStatusRequest; // Asumo que tengo este Request Form
-use App\Models\ServiceStatus ; // Asumo que tengo este Modelo
+use App\Models\service_statuses; // Asumo que tengo este Modelo
 
 
 
@@ -25,7 +25,7 @@ class ServiceStatusesController extends Controller
     public function index()
     {
         // Ordeno por nombre para una mejor navegación en el backoffice
-        $statuses = ServiceStatus::orderBy('name')->paginate(15);
+        $statuses = service_statuses::orderBy('name')->paginate(15);
         return response()->json($statuses);
     }
 
@@ -34,7 +34,7 @@ class ServiceStatusesController extends Controller
      */
     public function show($id)
     {
-        $status = ServiceStatus::findOrFail($id);
+        $status = service_statuses::findOrFail($id);
         return response()->json($status);
     }
 
@@ -44,7 +44,7 @@ class ServiceStatusesController extends Controller
     public function store(ServiceStatusRequest $request)
     {
         // Utilizo el Request Form para validar y crear
-        $status = ServiceStatus::create($request->validated());
+        $status = service_statuses::create($request->validated());
         return response()->json($status, 201);
     }
 
@@ -53,7 +53,7 @@ class ServiceStatusesController extends Controller
      */
     public function update(ServiceStatusRequest $request, $id)
     {
-        $status = ServiceStatus::findOrFail($id);
+        $status = service_statuses::findOrFail($id);
         $status->update($request->validated());
         return response()->json($status);
     }
@@ -63,9 +63,9 @@ class ServiceStatusesController extends Controller
      */
     public function destroy($id)
     {
-        $status = ServiceStatus::findOrFail($id);
+        $status = service_statuses::findOrFail($id);
 
-        // ⚠️ Nota: En un entorno de producción, debería verificar si hay Servicios
+        // Nota: En un entorno de producción, debería verificar si hay Servicios
         // usando este estado antes de permitir la eliminación.
 
         $status->delete();

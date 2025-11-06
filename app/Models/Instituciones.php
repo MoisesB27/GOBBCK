@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use App\Models\Pgob;
 use App\Models\Tramite;
 use App\Models\Service;
@@ -18,6 +19,8 @@ class Instituciones extends Model
 
         'nombre',
         'sigla',
+        'Estado',
+        'Encargado',
     ];
 
     /**
@@ -35,13 +38,16 @@ class Instituciones extends Model
         return $this->belongsToMany(Pgob::class, 'institucion_pgob', 'institucion_id', 'pgob_id');
     }
 
-    /**
-     * Relación: Tengo muchos servicios.
-     */
-    public function services()
+
+    public function services(): HasManyThrough
     {
-        return $this->hasMany(Service::class, 'institucion_id', 'id');
+        // Esto le dice a Laravel:
+        // "Busca en la tabla 'services' (1er param)
+        // a través de la tabla 'tramites' (2do param)"
+        return $this->hasManyThrough(Service::class, Tramite::class, 'institucion_id', 'tramite_id');
+
     }
+
     /**
      * Relación: Tengo muchos contactos.
      */

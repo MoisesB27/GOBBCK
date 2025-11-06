@@ -3,25 +3,24 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Instituciones;
-use App\Models\Pgob;
-use App\Models\Tramite;
-use App\Models\ServiceStatus;
-use App\Models\appointments;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany; // Importar HasMany
+use App\Models\Tramite;
+use App\Models\Pgob;
+use App\Models\service_statuses; // Usar nombre singular CamelCase por convención
+use App\Models\appointments; // Usar el nombre plural que tienes
+
 class Service extends Model
 {
-
     use HasFactory;
 
     protected $fillable = [
-        'name',
         'slug',
         'description',
         'duration',
         'logo',
         'tramite_id',
-        'institucion_id',
         'ubicacion',
         'status_id',
         'pgob_id',
@@ -39,38 +38,34 @@ class Service extends Model
     /**
      * Relación con tramite.
      */
-    public function tramite()
+    public function tramite(): BelongsTo
     {
-        return $this->belongsTo(Tramite::class, 'tramite_id', 'id');
-    }
-
-    /**
-     * Relación con institución.
-     */
-    public function institucion()
-    {
-        return $this->belongsTo(Instituciones::class, 'institucion_id', 'id');
+        return $this->belongsTo(Tramite::class, 'tramite_id');
     }
 
     /**
      * Relación con punto gob.
      */
-    public function pgob()
+    public function pgob(): BelongsTo
     {
-        return $this->belongsTo(Pgob::class, 'pgob_id', 'id');
+        return $this->belongsTo(Pgob::class, 'pgob_id');
     }
 
-    public function status()
+    /**
+     * Relación con el estado del servicio.
+     */
+    public function status(): BelongsTo
     {
-        // Se relaciona con la nueva tabla de referencia service_statuses
-        return $this->belongsTo(ServiceStatus::class, 'status_id');
+        // Asegúrate que tu modelo se llame ServiceStatus.php
+        return $this->belongsTo(service_statuses::class, 'status_id');
     }
 
-    public function appointments()
+    /**
+     * Relación: un Servicio puede tener muchas Citas. (CORREGIDO)
+     */
+    public function appointments(): HasMany // <-- Cambiado a HasMany
     {
-        // Nota: Los servicios pueden estar en varias citas a través de la tabla pivote 'appointment_services'
-        return $this->belongsToMany(Appointments::class, 'appointment_services')->withPivot('quantity', 'special_requests')
-                    ->withTimestamps();
+        // La tabla 'appointments' tiene la llave foránea 'service_id'
+        return $this->hasMany(appointments::class, 'service_id');
     }
-
 }

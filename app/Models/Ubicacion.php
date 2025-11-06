@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Ubicacion extends Model
 {
@@ -41,5 +42,10 @@ class Ubicacion extends Model
         'radio_cobertura' => 'integer',
         'extras' => 'array',
     ];
+
+    public function pgob(): BelongsTo
+    {
+        return $this->belongsTo(Pgob::class);
+    }
 
 }

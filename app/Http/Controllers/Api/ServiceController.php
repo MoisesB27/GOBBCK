@@ -8,13 +8,6 @@ use App\Models\Service;
 
 class ServiceController extends Controller
 {
-    /**
-     * Aplico la capa de seguridad para que solo los super-admins puedan gestionar servicios.
-     */
-    public function __construct()
-    {
-        $this->middleware(['role:super-admin']);
-    }
 
     /**
      * Muestro todos mis servicios, incluyendo sus relaciones clave y el estado.
@@ -22,7 +15,7 @@ class ServiceController extends Controller
     public function index()
     {
         //  Cargo las relaciones: trámite, institución, Punto GOB y la nueva relación 'status'.
-        $services = Service::with(['tramite', 'institucion', 'pgob', 'status'])->paginate(15);
+        $services = Service::with(['tramite', 'pgob', 'status_id'])->paginate(15);
         return response()->json($services);
     }
 
@@ -32,7 +25,7 @@ class ServiceController extends Controller
     public function show($id)
     {
         //  Cargo el servicio y todas sus relaciones asociadas, incluyendo 'status'.
-        $service = Service::with(['tramite', 'institucion', 'pgob', 'status'])->findOrFail($id);
+        $service = Service::with(['tramite', 'pgob', 'status_id'])->findOrFail($id);
         return response()->json($service);
     }
 

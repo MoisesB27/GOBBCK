@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
+use Carbon\Carbon; // Importamos Carbon para el cálculo de fechas
 
 class UserController extends Controller
 {
@@ -15,13 +17,34 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        // 1. Eager Loading: Cargo el perfil y los roles para evitar N+1
-        $query = User::with('profile', 'roles');
+        // --- 0. CÁLCULO DE CONTADORES DEL DASHBOARD ---
+        $today = Carbon::today();
+        $thirtyDaysAgo = Carbon::today()->subDays(30);
 
-        // 2. Aplicar búsqueda por nombre o email
+        $counts = [
+            'total_usuarios' => User::count(),
+            // Asumo que 'Usuarios nuevos' son aquellos registrados en los últimos 30 días
+            'usuarios_nuevos' => User::where('created_at', '>=', $thirtyDaysAgo)->count(),
+            // Asumo que 'Usuarios activos' son todos aquellos que tienen un rol asignado y no están inhabilitados
+            // Nota: Para inhabilitar, asumimos la tabla 'users' tiene un campo 'is_active'
+            'usuarios_activos' => User::where('is_active', true)->count(),
+
+            'usuarios_inhabilitados' => User::where('is_active', false)->count(),
+        ];
+
+        // 1. Eager Loading: Cargamos roles y los Puntos GOB que administra el usuario
+        // Nota: Asumo que la relación 'adminPgobs' está definida en el modelo User
+        $query = User::with('roles', 'adminPgobs');
+
+        // 2. Aplicar búsqueda por nombre, email o cédula (Añadido 'apellido' y 'cedula')
         if ($request->has('search')) {
             $searchTerm = '%' . $request->input('search') . '%';
-            $query->where('name', 'like', $searchTerm)->orWhere('email', 'like', $searchTerm);
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('name', 'like', $searchTerm)
+                    ->orWhere('apellido', 'like', $searchTerm)
+                    ->orWhere('email', 'like', $searchTerm)
+                    ->orWhere('cedula', 'like', $searchTerm);
+            });
         }
 
         // 3. Aplicar filtro por rol (usa el método 'role' del paquete Spatie)
@@ -31,7 +54,12 @@ class UserController extends Controller
 
         // 4. Paginar y ejecutar
         $users = $query->paginate(15);
-        return response()->json($users);
+
+        // 5. Devolver la respuesta con los contadores
+        return response()->json([
+            'counts' => $counts,
+            'users' => $users
+        ]);
     }
 
 
@@ -40,22 +68,28 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        // Eager load el perfil, los roles y los Puntos GOB que administra
-        $user->load('profile', 'roles', 'adminPgobs');
+        // Eager load roles y los Puntos GOB que administra
+        $user->load('roles', 'adminPgobs', 'institucion');
         return response()->json($user);
     }
 
     /**
      * Creo un nuevo usuario y le asigno roles.
+     * Este método se usa para crear ciudadanos y administradores (si se envían los campos admin).
      */
     public function store(Request $request)
     {
-        // 1. Validación de datos (incluyendo roles)
+        // 1. Validación de datos (usamos Request básico, puedes cambiarlo por un FormRequest si es complejo)
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'cedula' => 'nullable|string|max:13|unique:users,cedula',
+            'apellido' => 'required|string|max:255', // Añadido
+            'cedula' => 'nullable|string|max:13|unique:users,cedula', // Añadido
+            'telefono' => 'nullable|string|max:20', // Añadido
+            'institucion_id' => 'nullable|exists:instituciones,id', // Añadido
             'email' => 'required|email|string|unique:users,email',
             'password' => 'required|string|min:6',
+            'roles' => 'nullable|array', // Array de nombres de roles
+            'roles.*' => 'string|exists:roles,name', // Valida que los roles existan
         ]);
 
         // 2. Hash del password
@@ -66,11 +100,14 @@ class UserController extends Controller
 
         // 4. Asignar roles si se proporcionan
         if (isset($validated['roles'])) {
-            $user->assignRole($validated['roles']);
-            // Recargo para que la respuesta incluya los roles asignados
-            $user->load('roles');
+            $user->syncRoles($validated['roles']); // syncRoles en lugar de assignRole si se envían múltiples
+        } else {
+             // Asigna el rol por defecto si no se especifica (ej. 'usuario' o 'ciudadano')
+            $user->assignRole('usuario');
         }
 
+        // 5. Devolver usuario creado (con roles)
+        $user->load('roles', 'institucion');
         return response()->json($user, 201);
     }
 
@@ -81,16 +118,23 @@ class UserController extends Controller
     {
         $authUser = Auth::user();
 
+        // 0. Autorización: Permite al usuario editar su propio perfil o al superadmin editar a cualquiera.
         if ($authUser->id !== $user->id && !$authUser->hasRole('superadmin')) {
             return response()->json(['message' => 'No autorizado para editar este usuario.'], 403);
         }
 
-        // 1. Validación de datos
+        // 1. Validación de datos (añadido validación para campos de admin)
         $validated = $request->validate([
             'name' => 'sometimes|required|string|max:255',
-            'cedula' => 'sometimes|nullable|string|max:13|unique:users,cedula,' . $user->id,
-            'email' => 'sometimes|required|email|string|unique:users,email,' . $user->id,
+            'apellido' => 'sometimes|nullable|string|max:255', // Añadido
+            'cedula' => ['sometimes', 'nullable', 'string', 'max:13', Rule::unique('users', 'cedula')->ignore($user->id)], // Añadido
+            'telefono' => 'sometimes|nullable|string|max:20', // Añadido
+            'institucion_id' => 'sometimes|nullable|exists:instituciones,id', // Añadido
+            'email' => ['sometimes', 'required', 'email', 'string', Rule::unique('users', 'email')->ignore($user->id)],
             'password' => 'sometimes|nullable|string|min:6',
+            'roles' => 'sometimes|array',
+            'roles.*' => 'string|exists:roles,name',
+            'is_active' => 'sometimes|boolean', // Añadido para inhabilitar/habilitar
         ]);
 
         // 2. Manejo de password
@@ -100,11 +144,9 @@ class UserController extends Controller
             unset($validated['password']);
         }
 
-        // 3. Sincronizar roles (solo si se proporciona el campo 'roles' y el Auth::user() es admin)
+        // 3. Sincronizar roles (SOLO si se proporciona el campo 'roles' y el Auth::user() es superadmin)
         if (isset($validated['roles']) && $authUser->hasRole('superadmin')) {
-            // syncRoles reemplaza todos los roles existentes con la nueva lista
             $user->syncRoles($validated['roles']);
-            // Remuevo 'roles' de validated para que no intente actualizar un campo inexistente en la tabla 'users'
             unset($validated['roles']);
         }
 
@@ -112,8 +154,7 @@ class UserController extends Controller
         $user->update($validated);
 
         // 5. Devolver usuario actualizado (con roles)
-        $user->load('profile', 'roles');
-
+        $user->load('roles', 'institucion');
         return response()->json($user);
     }
 
@@ -122,7 +163,7 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        // Autorización: Solo 'super-admin' puede eliminar
+        // Autorización: Solo 'superadmin' puede eliminar
         $authUser = Auth::user();
         if (!$authUser->hasRole('superadmin')) {
             return response()->json(['message' => 'No autorizado para eliminar usuarios.'], 403);

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
@@ -65,22 +66,37 @@ class LoginController extends Controller
 
     }
 
-    // Login
-        public function login(LoginRequest $request)
+    public function login(LoginRequest $request)
     {
-        $user = User::where('email', $request->email)->first();
+        $credentials = $request->only('email', 'password');
 
-        if (! $user || ! Hash::check($request->password, $user->password)) {
+        // 1. Intentar autenticación (limpia y robusta)
+        if (!Auth::attempt($credentials)) {
             throw ValidationException::withMessages([
-                'email' => ['Las credenciales son incorrectas.'],
+                'email' => ['Las credenciales son incorrectas.']
             ]);
         }
 
-        $token = $user->createToken('api_token')->plainTextToken;
+        $user = Auth::user();
 
+        // 2. Seguridad: Chequear estado de activación (is_active)
+        if (isset($user->is_active) && !$user->is_active) {
+             // Revocar credenciales si la cuenta está inactiva y devolver 403
+                Auth::logout();
+                return response()->json([
+                'message' => 'Su cuenta ha sido inhabilitada. Contacte a un administrador.'
+            ], 403); // 403 Forbidden si el usuario no está activo
+        }
+
+        // 3. Generar token
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        // 4. Devolver respuesta exitosa
         return response()->json([
-            'user' => $user,
-            'token'=> $token,
+            'message' => 'Inicio de sesión exitoso.',
+            'user' => $user->load('roles', 'institucion'),
+            'token' => $token,
+            'token_type' => 'Bearer'
         ]);
     }
 

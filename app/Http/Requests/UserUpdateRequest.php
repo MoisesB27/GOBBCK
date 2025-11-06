@@ -31,6 +31,10 @@ class UserUpdateRequest extends FormRequest
             // Campos obligatorios y básicos
             'name' => ['required', 'string', 'max:100'],
             'email' => ['required', 'string', 'max:100'],
+            'apellido' => ['nullable', 'string', 'max:100'],
+            'telefono' => ['nullable', 'string', 'max:15'],
+            'institucion_id' => ['nullable', 'exists:instituciones,id'],
+            'active' => ['nullable', 'boolean'],
 
             // Validación de Email: Debe ser único en la tabla 'users',
             // pero excluyendo el email actual del usuario que está actualizando.

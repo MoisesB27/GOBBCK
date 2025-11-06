@@ -16,7 +16,6 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id'); // Mismo tipo que users.id
             $table->string('first_name');
             $table->string('last_name');
-            $table->string('cedula')->unique()->nullable();
             $table->enum('sexo', ['masculino', 'femenino', 'otro'])->nullable();
             $table->text('direccion')->nullable();
             $table->string('phone')->nullable();

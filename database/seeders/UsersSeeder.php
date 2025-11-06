@@ -29,6 +29,7 @@ class UsersSeeder extends Seeder
             [
                 'email' => 'ana@example.com',
             ],
+
             [
                 'name' => 'Ana Gómez',
                 'cedula' => '40123456789',

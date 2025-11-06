@@ -12,7 +12,7 @@ class AppointmentStatus extends Model
 
     protected $table = 'appointment_statuses';
 
-    protected $fillable = ['name', 'color_code', 'order', 'is_active'];
+    protected $fillable = ['name','descripcion', 'color_code', 'order', 'is_active'];
 
     // Relación One-to-Many: Un estado puede tener muchas citas.
     public function appointments()

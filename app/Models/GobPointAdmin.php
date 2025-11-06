@@ -10,7 +10,11 @@ class GobPointAdmin extends Pivot
 {
     use HasFactory;
     protected $table = 'gob_point_admins';
-    protected $fillable = ['user_id', 'gob_point_id'];
+    protected $fillable = [
+
+        'user_id',
+        'pgob_id'
+    ];
 
     public function user()
     {
@@ -19,6 +23,6 @@ class GobPointAdmin extends Pivot
 
     public function pgob()
     {
-        return $this->belongsTo(Pgob::class, 'gob_point_id');
+        return $this->belongsTo(Pgob::class, 'pgob_id');
     }
 }

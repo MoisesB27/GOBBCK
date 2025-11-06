@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('appointment_statuses', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->text('descripcion')->nullable();
             $table->string('color_code')->default('#6c757d');
             $table->integer('order')->default(0);
             $table->boolean('is_active')->default(true);

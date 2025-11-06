@@ -26,7 +26,6 @@ class Historial extends Model
 
     protected $casts = [
         'fecha' => 'date',
-        'hora' => 'time',
     ];
 
     // Usuario asociado

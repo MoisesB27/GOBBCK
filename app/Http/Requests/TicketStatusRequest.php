@@ -4,55 +4,71 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth; // Para la autorización
 
 class TicketStatusRequest extends FormRequest
 {
     /**
-     * Determino si el usuario está autorizado para hacer esta petición.
+     * Determina si el usuario está autorizado para hacer esta petición.
      */
     public function authorize(): bool
     {
-        // Asumo que la autorización se manejará a nivel de Controller/Middleware (role:super-admin)
-        return true;
+        // Asumimos que solo un 'superadmin' puede gestionar los estados de los tickets
+        return Auth::check() && Auth::user()->hasRole('superadmin');
     }
 
     /**
-     * Obtengo las reglas de validación que se aplican a la petición.
+     * Obtiene las reglas de validación que se aplican a la petición.
+     * (CORREGIDO: Se eliminó 'priority_level' de aquí)
      */
     public function rules(): array
     {
-        $statusId = $this->route('status'); // Obtengo el ID si es un UPDATE
+        $statusId = $this->route('status'); // Obtiene el ID del estado si es un UPDATE
 
         return [
-            // El nombre debe ser único
+            // El nombre debe ser único, ignorando el ID actual al actualizar
             'name' => [
                 'required',
                 'string',
                 'max:255',
                 Rule::unique('ticket_statuses', 'name')->ignore($statusId),
             ],
-            // Campo Enum: solo permito los valores definidos en la migración
-            'priority_level' => [
+
+            // Campos de la migración 'create_ticket_statuses_table.php'
+            'color_code' => [
                 'required',
                 'string',
-                Rule::in(['urgente', 'prioritaria', 'ordinaria']),
+                'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/' // Valida código HEX
             ],
-            // Código de color opcional
-            'color_code' => 'nullable|string|regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/',
-            // Si el estado está activo
             'is_active' => 'sometimes|boolean',
+            'description' => 'nullable|string|max:1000',
         ];
     }
 
     /**
-     * Preparamo los datos para la validación
+     * Prepara los datos para la validación (maneja checkboxes)
      */
     protected function prepareForValidation()
     {
-        if ($this->has('is_active') && is_string($this->is_active)) {
+        // Convierte "true", "on", "1" a un booleano verdadero
+        if ($this->has('is_active')) {
             $this->merge([
                 'is_active' => filter_var($this->is_active, FILTER_VALIDATE_BOOLEAN),
             ]);
         }
     }
+
+    /**
+     * Mensajes de error personalizados.
+     */
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'El nombre del estado es obligatorio.',
+            'name.unique' => 'Este nombre de estado ya existe.',
+            'color_code.required' => 'El código de color es obligatorio.',
+            'color_code.regex' => 'El código de color debe ser un formato HEX válido (ej. #FFFFFF).',
+        ];
+    }
 }
+

@@ -23,7 +23,7 @@ return new class extends Migration
                     ->nullOnDelete()
                     ->comment('ID del usuario logueado que reporta el incidente.');
 
-            // Se hacen nullable por si el ticket lo envía un usuario registrado (los datos se toman del perfil)
+            // Se hacen nullable por si el ticket lo envía un usuario no registrado
             $table->string('nombre_completo')->nullable();
             $table->string('correo_electronico')->nullable();
 
@@ -39,17 +39,24 @@ return new class extends Migration
                     ->nullOnDelete()
                     ->comment('ID del administrador asignado para resolver el ticket.');
 
-            // 2. Contexto (Punto GOB afectado)
+            // 2. Prioridad (¡AÑADIDO!)
+            // Foreign Key a tu tabla de referencia ticket_priorities
+            $table->foreignId('priority_id')
+                    ->constrained('ticket_priorities')
+                    ->default(3) // Asume el ID 3 es 'Ordinaria' (del Seeder)
+                    ->comment('ID de la prioridad actual del ticket.');
+
+            // 3. Contexto (Punto GOB afectado)
             $table->foreignId('pgob_id')
                     ->nullable()
                     ->constrained('pgobs')
                     ->nullOnDelete()
                     ->comment('ID del Punto GOB afectado por el problema reportado.');
 
-            // 3. Estado del Ticket (Columna 'Estado')
+            // 4. Estado del Ticket (Columna 'Estado')
             // Foreign Key a tu tabla de referencia ticket_statuses
             $table->foreignId('status_id')
-                    ->constrained('ticket_statuses') // Usando tu tabla 2025_10_13_030537...
+                    ->constrained('ticket_statuses')
                     ->default(1) // Asume el ID 1 es 'Abierto'
                     ->comment('ID del estado actual del ticket.');
 
